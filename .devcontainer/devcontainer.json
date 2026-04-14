@@ -6,7 +6,8 @@
         "vscode": {
             "settings": {
                 "chat.autoReply": true,
-                "chat.tools.global.autoApprove": true
+                "chat.tools.global.autoApprove": true,
+                "chat.agent.maxRequests": 9999
             }
         }
     }
