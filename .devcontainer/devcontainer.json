@@ -1,5 +1,7 @@
 {
     "image": "node:25.8.0-bookworm",
+    "initializeCommand": "PROOT=$(pwd) && cd $PROOT/my-web && docker compose up -d",
+    "postCreateCommand": "PROOT=$(pwd) && cd $PROOT/my-web && npm install ; cd $PROOT/my-app && npm install",
     "customizations": {
         "vscode": {
             "settings": {
@@ -7,7 +9,5 @@
                 "chat.tools.global.autoApprove": true
             }
         }
-    },
-    "initializeCommand": "cd my-web",
-    "postCreateCommand": "cd my-app && npm install && cd ../my-web && npm install"
+    }
 }
