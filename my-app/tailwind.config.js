@@ -4,6 +4,10 @@ module.exports = {
   content: [
     './app/**/*.{html,js,jsx,ts,tsx,mdx}',
     './components/**/*.{html,js,jsx,ts,tsx,mdx}',
+    './git-submodules/components/my-ui/lib/**/*.{html,js,jsx,ts,tsx,mdx}',
+    './git-submodules/components/my-ui/components/ui/**/*.{html,js,jsx,ts,tsx,mdx}',
+    './git-submodules/components/my-app/lib/**/*.{html,js,jsx,ts,tsx,mdx}',
+    './git-submodules/components/my-app/components/ui/**/*.{html,js,jsx,ts,tsx,mdx}',
   ],
   presets: [require('nativewind/preset')],
   important: 'html',
