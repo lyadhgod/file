@@ -1,5 +1,6 @@
 {
     "image": "node:25.8.0-bookworm",
+    "runArgs": [ "--name", "file_devcontainer" ],
     "initializeCommand": "PROOT=$(pwd) && cd $PROOT/my-web && docker compose up -d",
     "postCreateCommand": "PROOT=$(pwd) && cd $PROOT/my-web && npm install ; cd $PROOT/my-app && npm install",
     "customizations": {
