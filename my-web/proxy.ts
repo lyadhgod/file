@@ -29,7 +29,6 @@ export async function proxy(request: NextRequest) {
   let isPublicRoute = false;
   switch (pathname) {
     case '/api/ping':
-    case '/api/verify-jwt':
       isPublicRoute = true;
       break;
   }

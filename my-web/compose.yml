@@ -1,6 +1,14 @@
 name: file_my-web
 
 services:
+  s3:
+    image: luofuxiang/local-s3:2.4
+    restart: unless-stopped
+    volumes:
+      - s3-data:/data
+    ports:
+      - "8000:80"
+      
   redis:
     image: redis:8.6.2-alpine3.23
     restart: unless-stopped
@@ -32,3 +40,4 @@ services:
 volumes:
   postgres-data:
   redis-data:
+  s3-data:

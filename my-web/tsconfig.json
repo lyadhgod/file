@@ -16,7 +16,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "jsxImportSource": "nativewind",
     "incremental": true,
     "plugins": [
@@ -37,7 +37,8 @@
     ".next/types/**/*.ts",
     "next.config.mjs",
     "nativewind-env.d.ts",
-    "tailwind-variants.d.ts"
+    "tailwind-variants.d.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
