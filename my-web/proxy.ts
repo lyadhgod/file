@@ -21,7 +21,7 @@ export async function proxy(request: NextRequest) {
       ...corsOptions,
       ...(isAllowedOrigin ? { 'Access-Control-Allow-Origin': origin } : {}),
     }
-    return NextResponse.json({}, { headers: preflightHeaders })
+    return new NextResponse(null, { status: 200, headers: preflightHeaders })
   }
 
   // Verify JWT for protected routes
@@ -33,8 +33,9 @@ export async function proxy(request: NextRequest) {
       break;
   }
   
+  let jwtPayload;
   if (!isPublicRoute) {
-    const unauthorizedResponse = NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const unauthorizedResponse = new NextResponse(null, { status: 401 });
     
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -46,15 +47,24 @@ export async function proxy(request: NextRequest) {
       return unauthorizedResponse;
     }
     
-    const isValid = await verifyJwt(parts[1]);
-    if (!isValid) {
+    const { valid, payload } = await verifyJwt(parts[1]);
+    if (!valid) {
       return unauthorizedResponse;
     }
+    jwtPayload = payload;
   }
  
   // Handle simple requests
-  const response = NextResponse.next()
- 
+  let response: NextResponse;
+  if (typeof jwtPayload?.user?.id === 'string') {
+    const url = request.nextUrl.clone();
+    url.searchParams.set("user_id", jwtPayload.user.id);
+
+    response = NextResponse.rewrite(url);
+  } else {
+    response = NextResponse.next();
+  }
+
   if (isAllowedOrigin) {
     response.headers.set('Access-Control-Allow-Origin', origin)
   }

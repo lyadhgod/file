@@ -11,12 +11,18 @@ export async function verifyJwt(token: string) {
     }
 
     const JWKS = createLocalJWKSet(jwks)
-    await jwtVerify(token, JWKS, {
+    const result = await jwtVerify(token, JWKS, {
       issuer: process.env.FILE_MYWEB_AUTH_API_BASE_URL, // Should match your JWT issuer, which is the BASE_URL
     })
 
-    return true
+    return {
+      valid: true,
+      payload: result.payload,
+    };
   } catch (error) {
-    return false
+    return {
+      valid: false,
+      payload: null,
+    };
   }
 }
