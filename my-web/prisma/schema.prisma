@@ -9,3 +9,21 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum FileVisibility {
+  public
+  private
+}
+
+model File {
+  id         String         @id @default(cuid())
+  mime       String
+  name       String
+  sha256     String
+  sha512     String
+  visibility FileVisibility @default(public)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@map("file_file")
+}

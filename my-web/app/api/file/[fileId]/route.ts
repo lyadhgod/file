@@ -1,19 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '../../../../integrations/prisma';
 import { get, remove } from '../../../../integrations/s3';
+import { buildDownloadHeaders, canAccessFile, findFileRecord } from '../file-service';
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
     try {
         const { fileId } = await params;
+        const record = await findFileRecord(fileId);
+        if (record === null) {
+            return new NextResponse(null, { status: 404 });
+        }
+
+        const hasAccess = await canAccessFile(request, record.visibility);
+        if (!hasAccess) {
+            return new NextResponse(null, { status: 403 });
+        }
+
         const stream = await get(fileId);
         if (stream === null) {
             return new NextResponse(null, { status: 404 });
         }
 
         return new NextResponse(stream, {
-            headers: {
-                'Content-Type': 'image/svg+xml',
-                'Content-Disposition': `attachment; filename="${fileId}"`,
-            },
+            headers: buildDownloadHeaders(record.name, record.mime),
         });
     } catch {
         return new NextResponse(null, { status: 500 });
@@ -23,9 +32,20 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ fileId
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
     try {
         const { fileId } = await params;
-        const success = await remove(fileId);
-        return new NextResponse(null, { status: success ? 204 : 404 });
-    } catch (error) {
+        const record = await findFileRecord(fileId);
+        if (record === null) {
+            return new NextResponse(null, { status: 404 });
+        }
+
+        await remove(fileId);
+        await prisma.file.delete({
+            where: {
+                id: fileId,
+            },
+        });
+
+        return new NextResponse(null, { status: 204 });
+    } catch {
         return new NextResponse(null, { status: 500 });
     }
 }

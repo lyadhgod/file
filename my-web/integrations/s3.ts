@@ -28,13 +28,13 @@ async function createBucketIfDev() {
     }
 }
 
-export async function save(name: string, arrayBuffer: ArrayBuffer) {
+export async function save(name: string, buffer: Buffer) {
     await createBucketIfDev();
 
     const command = new PutObjectCommand({
         Bucket: process.env.FILE_MYWEB_S3_BUCKET_NAME,
         Key: name,
-        Body: Buffer.from(arrayBuffer),
+        Body: buffer,
     });
     await client.send(command);
 }
