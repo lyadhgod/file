@@ -25,15 +25,6 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/utils/*": [
-        "./utils/*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
       "tailwind.config": [
         "./tailwind.config.js"
       ]

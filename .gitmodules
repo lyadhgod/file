@@ -1,3 +1,6 @@
 [submodule "my-app/git-submodules/components"]
 	path = my-app/git-submodules/components
 	url = git@github.com:lyadhgod/components.git
+[submodule "my-web/git-submodules/components"]
+	path = my-web/git-submodules/components
+	url = git@github.com:lyadhgod/components.git

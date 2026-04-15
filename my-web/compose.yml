@@ -1,0 +1,34 @@
+name: file_my-web
+
+services:
+  redis:
+    image: redis:8.6.2-alpine3.23
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6001:6379"
+    
+  postgres:
+    image: postgres:17.9-alpine3.23
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - "4004:5432"
+
+  adminer:
+    image: adminer:5.4.2
+    restart: unless-stopped
+    ports:
+      - "4005:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
+  redis-data:

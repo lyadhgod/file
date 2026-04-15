@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3005",
     "build": "next build",
     "build:preview": "next build",
-    "start": "next start",
+    "start": "next start -p 3005",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@gorhom/bottom-sheet": "^5.0.0-alpha.11",
     "@legendapp/motion": "^2.4.0",
     "dom-helpers": "^5.2.1",
+    "jose": "^6.2.2",
     "lucide-react-native": "^1.8.0",
     "nativewind": "^4.1.23",
     "next": "16.2.3",
@@ -27,6 +28,8 @@
     "react-native-svg": "^15.12.0",
     "react-native-web": "^0.20.0",
     "react-stately": "^3.39.0",
+    "redis": "^5.11.0",
+    "rgb-hex": "^4.1.0",
     "tailwind-variants": "^0.1.20"
   },
   "devDependencies": {

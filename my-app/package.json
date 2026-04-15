@@ -3,10 +3,10 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start": "expo start --port=5004",
+    "android": "expo start --android --port=5004",
+    "ios": "expo start --ios --port=5004",
+    "web": "expo start --web --port=5004",
     "build": "expo export --platform web --output-dir dist",
     "build:preview": "expo export --platform web --output-dir dist",
     "test": "jest --watchAll"
