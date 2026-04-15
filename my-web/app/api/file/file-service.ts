@@ -51,8 +51,8 @@ export async function buildFilePayload(file: File) {
 
     return {
         buffer,
-        mime: file.type,
-        name: file.name,
+        mime: file.type || 'application/octet-stream',
+        name: file.name || 'unnamed',
         sha256: createHash('sha256').update(buffer).digest('hex'),
         sha512: createHash('sha512').update(buffer).digest('hex'),
     };
@@ -66,12 +66,42 @@ export async function findFileRecord(fileId: string) {
     });
 }
 
-export async function canAccessFile(_: NextRequest, visibility: FileVisibilityValue) {
-    if (visibility === 'public') {
+export function getRequestUserId(request: NextRequest) {
+    const userId = request.nextUrl.searchParams.get('user_id');
+    return userId && userId.length > 0 ? userId : null;
+}
+
+export function canAccessFile(request: NextRequest, file: { visibility: FileVisibilityValue; userId?: string | null }) {
+    if (file.visibility === 'public') {
         return true;
     }
 
-    return true;
+    const requestUserId = getRequestUserId(request);
+    const fileUserId = file.userId ?? null;
+
+    return requestUserId !== null && fileUserId !== null && requestUserId === fileUserId;
+}
+
+export function getPrivateUploadUserId(request: NextRequest, visibility: FileVisibilityValue) {
+    if (visibility === 'public') {
+        return {
+            error: null,
+            userId: null,
+        };
+    }
+
+    const userId = getRequestUserId(request);
+    if (userId === null) {
+        return {
+            error: 'Private files require an authenticated user.',
+            userId: null,
+        };
+    }
+
+    return {
+        error: null,
+        userId,
+    };
 }
 
 export function buildDownloadHeaders(name: string, mime: string) {

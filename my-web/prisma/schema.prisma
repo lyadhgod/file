@@ -21,6 +21,7 @@ model File {
   name       String
   sha256     String
   sha512     String
+  userId     String?
   visibility FileVisibility @default(public)
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt

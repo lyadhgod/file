@@ -9,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return new NextResponse(null, { status: 404 });
         }
 
-        const hasAccess = await canAccessFile(request, record.visibility);
+        const hasAccess = canAccessFile(request, record);
         if (!hasAccess) {
             return new NextResponse(null, { status: 403 });
         }

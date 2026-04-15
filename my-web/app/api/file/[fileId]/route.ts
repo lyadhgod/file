@@ -11,7 +11,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return new NextResponse(null, { status: 404 });
         }
 
-        const hasAccess = await canAccessFile(request, record.visibility);
+        const hasAccess = canAccessFile(request, record);
         if (!hasAccess) {
             return new NextResponse(null, { status: 403 });
         }
@@ -29,12 +29,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
     try {
         const { fileId } = await params;
         const record = await findFileRecord(fileId);
         if (record === null) {
             return new NextResponse(null, { status: 404 });
+        }
+
+        const hasAccess = canAccessFile(request, record);
+        if (!hasAccess) {
+            return new NextResponse(null, { status: 403 });
         }
 
         await remove(fileId);

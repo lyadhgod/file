@@ -26,11 +26,14 @@ export async function proxy(request: NextRequest) {
 
   // Verify JWT for protected routes
   const pathname = request.nextUrl.pathname;
-  let isPublicRoute = false;
-  switch (pathname) {
-    case '/api/ping':
-      isPublicRoute = true;
-      break;
+  let isPublicRoute = true;
+  if (pathname.startsWith('/api')) {
+    isPublicRoute = false;
+    switch (pathname) {
+      case '/api/ping':
+        isPublicRoute = true;
+        break;
+    }
   }
   
   let jwtPayload;

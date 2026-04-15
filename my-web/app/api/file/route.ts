@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../integrations/prisma';
 import { save } from '../../../integrations/s3';
-import { buildFilePayload, getUploadFile, getVisibilityValue } from './file-service';
+import { buildFilePayload, getPrivateUploadUserId, getUploadFile, getVisibilityValue } from './file-service';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,6 +16,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ errors: visibilityError }, { status: 400 });
         }
 
+        const { error: userIdError, userId } = getPrivateUploadUserId(request, visibility);
+        if (userIdError !== null) {
+            return NextResponse.json({ errors: userIdError }, { status: 403 });
+        }
+
         const { buffer, mime, name, sha256, sha512 } = await buildFilePayload(file);
         const record = await prisma.file.create({
             data: {
@@ -23,6 +28,7 @@ export async function POST(request: NextRequest) {
                 name,
                 sha256,
                 sha512,
+                userId,
                 visibility,
             },
         });
