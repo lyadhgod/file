@@ -234,7 +234,7 @@ function buildSelectedFile(asset: DocumentPicker.DocumentPickerAsset) {
 	} satisfies SelectedFile;
 }
 
-function getFallbackIcon(previewKind: PreviewKind) {
+function FallbackIcon({ previewKind }: { previewKind: PreviewKind }) {
 	switch (previewKind) {
 		case 'audio':
 			return Music4;
@@ -255,20 +255,6 @@ function renderProgressBar(progress: number) {
 			<Progress size="sm" value={Math.max(progress * 100, 8)}>
 				<ProgressFilledTrack />
 			</Progress>
-		</Box>
-	);
-}
-
-function renderFallbackPreview(selectedFile: SelectedFile, selectedFileLabel: string) {
-	const FallbackIcon = getFallbackIcon(selectedFile.previewKind);
-
-	return (
-		<Box className="flex-1 items-center justify-center px-6 py-8">
-			<Box className="mb-4 rounded-xl border border-slate-300 p-4">
-				<FallbackIcon size={40} strokeWidth={1.75} />
-			</Box>
-			<Text className="text-center text-base font-semibold">{selectedFile.name}</Text>
-			<Text className="mt-1 text-center text-sm">{selectedFileLabel}</Text>
 		</Box>
 	);
 }
@@ -308,35 +294,29 @@ function PreviewContent({ selectedFile, strings, onPreviewError }: PreviewConten
 		);
 	}
 
-	if (Platform.OS === 'web' && selectedFile.previewKind === 'video' && selectedFile.previewUri) {
-		return (
-			<>
-				<video
-					autoPlay={false}
-					controls
-					onError={onPreviewError}
-					src={selectedFile.previewUri}
-					style={{ height: '100%', objectFit: 'cover', width: '100%' }}
-				/>
-				<Box className="absolute bottom-0 left-0 right-0 bg-black/40 px-4 py-3">
-					<Text className="text-sm text-white">{selectedFile.name}</Text>
-				</Box>
-			</>
-		);
-	}
+	let FallbackIcon = FileIcon;
+	switch (selectedFile.previewKind) {
+		case 'audio':
+			FallbackIcon = Music4; break;
+		case 'image':
+			FallbackIcon = FileImage; break;
+		case 'video':
+			FallbackIcon = FileVideo; break;
+		case 'pdf':
+			FallbackIcon = FileText; break;
+		default:
+			FallbackIcon = FileIcon;
+	} 
 
-	if (Platform.OS === 'web' && selectedFile.previewKind === 'pdf' && selectedFile.previewUri) {
-		return (
-			<iframe
-				onError={onPreviewError}
-				src={selectedFile.previewUri}
-				style={{ borderWidth: 0, height: '100%', width: '100%' }}
-				title={selectedFile.name}
-			/>
-		);
-	}
-
-	return renderFallbackPreview(selectedFile, strings.selectedFile);
+	return (
+		<Box className="flex-1 items-center justify-center px-6 py-8">
+			<Box className="mb-4 rounded-xl border border-slate-300 p-4">
+				<FallbackIcon size={40} strokeWidth={1.75} />
+			</Box>
+			<Text className="text-center text-base font-semibold">{selectedFile.name}</Text>
+			<Text className="mt-1 text-center text-sm">{strings.selectedFile}</Text>
+		</Box>
+	);
 }
 
 type PreviewSectionProps = {
