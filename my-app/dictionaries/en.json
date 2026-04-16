@@ -1,3 +1,14 @@
 {
-    "0": ""
+    "0": "",
+    "1": "Drag and drop or click here to select a file",
+    "2": "Click here to select a file",
+    "3": "Upload",
+    "4": "Uploading...",
+    "5": "Remove selected file",
+    "6": "Selected file",
+    "7": "Unsupported file type.",
+    "8": "Unable to load a preview for this file.",
+    "9": "Unable to select a file.",
+    "10": "Unable to upload the file.",
+    "11": "Drop file here"
 }

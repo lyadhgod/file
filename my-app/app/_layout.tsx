@@ -6,7 +6,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
-import { DictionaryProvider } from '@/contexts/DictionaryContext';
+import { DictionaryProvider } from '../contexts/DictionaryContext';
+import FileUploader from '../lib/uploader';
+import { Box } from '../git-submodules/components/my-ui/lib/box';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,8 +46,10 @@ function RootLayoutNav() {
           </Head>
       ) }
       <DictionaryProvider>
-        <UiProvider>
-          
+        <UiProvider mode='dark'>
+          <Box className='flex-1 p-4'>
+            <FileUploader acceptedMimeTypes={['*/*']}/>
+          </Box>
         </UiProvider>
       </DictionaryProvider>
     </>
