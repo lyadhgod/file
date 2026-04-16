@@ -286,6 +286,7 @@ function PreviewContent({ selectedFile, strings, onPreviewError }: PreviewConten
 					size="full"
 					source={{ uri: selectedFile.previewUri }}
 					onError={onPreviewError}
+					alt={selectedFile.name}
 				/>
 				<Box className="absolute bottom-0 left-0 right-0 bg-black/40 px-4 py-3">
 					<Text className="text-sm text-white">{selectedFile.name}</Text>
