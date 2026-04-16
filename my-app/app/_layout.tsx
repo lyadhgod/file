@@ -45,7 +45,7 @@ function RootLayoutNav() {
       ) }
       <DictionaryProvider>
         <UiProvider>
-        
+          
         </UiProvider>
       </DictionaryProvider>
     </>
