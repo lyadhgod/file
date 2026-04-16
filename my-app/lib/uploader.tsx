@@ -511,9 +511,7 @@ export function FileUploader({
 				isUploading={state.isUploading}
 				onPreviewError={handlePreviewError}
 				onReset={resetSelection}
-				onSelect={() => {
-					void selectFile();
-				}}
+				onSelect={selectFile}
 				progress={state.progress}
 				selectedFile={state.selectedFile}
 				strings={strings}
@@ -521,14 +519,14 @@ export function FileUploader({
 			<Button
 				accessibilityLabel={state.isUploading ? strings.uploading : strings.upload}
 				isDisabled={!state.selectedFile || state.isUploading}
-				onPress={() => handleUpload()}
+				onPress={handleUpload}
 				className='rounded-none rounded-b-xl border border-slate-300 border-t-0 '
 			>
 				<ButtonText>
 					{state.isUploading ? strings.uploading : strings.upload}
 				</ButtonText>
 			</Button>
-			{errorMessage ? <Text className="text-sm text-rose-600">{errorMessage}</Text> : null}
+			{errorMessage ? <Text className="text-sm text-error-600 my-2">{errorMessage}</Text> : null}
 		</Box>
 	);
 }
