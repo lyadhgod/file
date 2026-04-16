@@ -252,7 +252,7 @@ function FallbackIcon({ previewKind }: { previewKind: PreviewKind }) {
 function renderProgressBar(progress: number) {
 	return (
 		<Box className="absolute bottom-4 left-4 right-4">
-			<Progress size="sm" value={Math.max(progress * 100, 8)}>
+			<Progress size="sm" value={Math.min(Math.max(progress * 100, 0), 100)}>
 				<ProgressFilledTrack />
 			</Progress>
 		</Box>

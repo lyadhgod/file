@@ -75,44 +75,47 @@ export async function uploadFile({
 
 	formData.append('visibility', visibility);
 
-	return new Promise<FileRecord>((resolve, reject) => {
-		const xhr = new XMLHttpRequest();
+	const firstProgress = Math.floor(Math.random() * 16) + 5;
+	const secondProgress = Math.floor(Math.random() * 75) + 21;
+	const progressTimers = [
+		setTimeout(() => {
+			onProgress?.(firstProgress / 100);
+		}, 100),
+		setTimeout(() => {
+			onProgress?.(secondProgress / 100);
+		}, 600),
+		setTimeout(() => {
+			onProgress?.(0.95);
+		}, 1600),
+	];
 
-		xhr.open('POST', `${API_BASE_URL}/api/file`);
-		if (typeof jwt === 'string' && jwt.length > 0) {
-			xhr.setRequestHeader('Authorization', `Bearer ${jwt}`);
+	try {
+		const response = await fetch(`${API_BASE_URL}/api/file`, {
+			method: 'POST',
+			headers: typeof jwt === 'string' && jwt.length > 0 ? { Authorization: `Bearer ${jwt}` } : undefined,
+			body: formData,
+		});
+		const payload = await response.text();
+
+		progressTimers.forEach(clearTimeout);
+		onProgress?.(1);
+
+		if (!response.ok) {
+			throw parseApiError(payload, `Upload failed with status ${response.status}.`);
 		}
-		xhr.responseType = 'text';
 
-		xhr.upload.onprogress = (event) => {
-			if (!event.lengthComputable) {
-				return;
-			}
+		try {
+			return JSON.parse(payload) as FileRecord;
+		} catch {
+			throw new Error('The upload response could not be parsed.');
+		}
+	} catch (error) {
+		progressTimers.forEach(clearTimeout);
 
-			onProgress?.(event.loaded / event.total);
-		};
+		if (error instanceof Error) {
+			throw error;
+		}
 
-		xhr.onerror = () => {
-			reject(new Error('The upload request failed.'));
-		};
-
-		xhr.onabort = () => {
-			reject(new Error('The upload request was aborted.'));
-		};
-
-		xhr.onload = () => {
-			if (xhr.status < 200 || xhr.status >= 300) {
-				reject(parseApiError(xhr.responseText, `Upload failed with status ${xhr.status}.`));
-				return;
-			}
-
-			try {
-				resolve(JSON.parse(xhr.responseText) as FileRecord);
-			} catch {
-				reject(new Error('The upload response could not be parsed.'));
-			}
-		};
-
-		xhr.send(formData);
-	});
+		throw new Error('The upload request failed.');
+	}
 }
