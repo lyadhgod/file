@@ -26,27 +26,9 @@ export type UploadableFileAsset = {
 export type UploadFileParams = {
 	asset: UploadableFileAsset;
 	visibility?: FileVisibility;
-	userId?: string;
 	onProgress?: (progress: number) => void;
+	jwt?: string | null;
 };
-
-function getApiBaseUrl() {
-	if (!API_BASE_URL) {
-		throw new Error('EXPO_PUBLIC_FILE_MYAPP_API_BASE_URL is not configured.');
-	}
-
-	return API_BASE_URL;
-}
-
-function buildApiUrl(path: string, userId?: string) {
-	const url = new URL(`${getApiBaseUrl()}${path}`);
-
-	if (userId) {
-		url.searchParams.set('user_id', userId);
-	}
-
-	return url.toString();
-}
 
 function parseApiError(payload: string | null, fallbackMessage: string) {
 	if (!payload) {
@@ -65,19 +47,6 @@ function parseApiError(payload: string | null, fallbackMessage: string) {
 	return new Error(fallbackMessage);
 }
 
-async function parseJsonResponse<T>(response: Response) {
-	if (!response.ok) {
-		const payload = await response.text();
-		throw parseApiError(payload, `Request failed with status ${response.status}.`);
-	}
-
-	return (await response.json()) as T;
-}
-
-function isWebFile(value: unknown): value is File {
-	return typeof File !== 'undefined' && value instanceof File;
-}
-
 function buildNativeFormFile(asset: UploadableFileAsset) {
 	return {
 		uri: asset.uri,
@@ -86,41 +55,16 @@ function buildNativeFormFile(asset: UploadableFileAsset) {
 	} as unknown as Blob;
 }
 
-export function getFileDownloadUrl(fileId: string, userId?: string) {
-	return buildApiUrl(`/api/file/${encodeURIComponent(fileId)}`, userId);
-}
-
-export async function pingApi() {
-	const response = await fetch(buildApiUrl('/api/ping'));
-	return parseJsonResponse<Record<string, unknown>>(response);
-}
-
-export async function getFileMeta(fileId: string, userId?: string) {
-	const response = await fetch(buildApiUrl(`/api/meta/${encodeURIComponent(fileId)}`, userId));
-	return parseJsonResponse<FileRecord>(response);
-}
-
-export async function deleteFile(fileId: string, userId?: string) {
-	const response = await fetch(buildApiUrl(`/api/file/${encodeURIComponent(fileId)}`, userId), {
-		method: 'DELETE',
-	});
-
-	if (!response.ok) {
-		const payload = await response.text();
-		throw parseApiError(payload, `Delete failed with status ${response.status}.`);
-	}
-}
-
 export async function uploadFile({
 	asset,
 	visibility = 'public',
-	userId,
 	onProgress,
+	jwt,
 }: UploadFileParams) {
 	const formData = new FormData();
 
 	if (Platform.OS === 'web') {
-		if (!isWebFile(asset.file)) {
+		if (!(typeof File !== 'undefined' && asset.file instanceof File)) {
 			throw new Error('A browser File instance is required when uploading from the web.');
 		}
 
@@ -134,7 +78,10 @@ export async function uploadFile({
 	return new Promise<FileRecord>((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 
-		xhr.open('POST', buildApiUrl('/api/file', userId));
+		xhr.open('POST', `${API_BASE_URL}/api/file`);
+		if (typeof jwt === 'string' && jwt.length > 0) {
+			xhr.setRequestHeader('Authorization', `Bearer ${jwt}`);
+		}
 		xhr.responseType = 'text';
 
 		xhr.upload.onprogress = (event) => {

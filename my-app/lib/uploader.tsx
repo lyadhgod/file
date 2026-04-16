@@ -18,6 +18,7 @@ import { Image } from '../git-submodules/components/my-ui/lib/image';
 import { Pressable } from '../git-submodules/components/my-ui/lib/pressable';
 import { Progress, ProgressFilledTrack } from '../git-submodules/components/my-ui/lib/progress';
 import { Text } from '../git-submodules/components/my-ui/lib/text';
+import { useFileContext } from './file-provider';
 
 type PreviewKind = 'image' | 'video' | 'pdf' | 'audio' | 'file';
 
@@ -67,7 +68,6 @@ export type FileUploaderProps = {
 	acceptedMimeTypes?: string[];
 	onUploadComplete?: (file: FileRecord) => void;
 	onUploadError?: (error: Error) => void;
-	userId?: string;
 	visibility?: FileVisibility;
 };
 
@@ -373,12 +373,12 @@ export function FileUploader({
 	acceptedMimeTypes = defaultAcceptedMimeTypes,
 	onUploadComplete,
 	onUploadError,
-	userId,
 	visibility = 'public',
 }: FileUploaderProps) {
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const objectUrlRef = useRef<string | null>(null);
 	const t = useDictionaryText();
+	const { jwt } = useFileContext();
 
 	const strings: UploaderStrings = {
 		clickPrompt: t('2'),
@@ -473,8 +473,8 @@ export function FileUploader({
 				onProgress: (progress) => {
 					dispatch({ type: 'UPLOAD_PROGRESS', payload: progress });
 				},
-				userId,
 				visibility,
+				jwt,
 			});
 
 			dispatch({ type: 'UPLOAD_SUCCESS' });
