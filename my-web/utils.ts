@@ -12,7 +12,8 @@ export async function verifyJwt(token: string) {
 
     const JWKS = createLocalJWKSet(jwks)
     const result = await jwtVerify(token, JWKS, {
-      issuer: process.env.FILE_MYWEB_AUTH_API_BASE_URL, // Should match your JWT issuer, which is the BASE_URL
+      issuer: process.env.FILE_MYWEB_AUTH_BETTERAUTH_API_JWKS_ISS,
+      audience: process.env.FILE_MYWEB_AUTH_BETTERAUTH_API_JWKS_ISS
     })
 
     return {

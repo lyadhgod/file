@@ -15,7 +15,18 @@ services:
     volumes:
       - redis-data:/data
     ports:
-      - "6001:6379"
+      - "6002:6379"
+
+  redisinsight:
+    image: redis/redisinsight:3.2.0
+    restart: unless-stopped
+    ports:
+      - "6003:5540"
+    environment:
+      - RI_REDIS_HOST=redis
+      - RI_REDIS_PORT=6379
+    depends_on:
+      - redis
     
   postgres:
     image: postgres:17.9-alpine3.23
