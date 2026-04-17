@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getDictionary } from "../dictionary";
-import LayoutClient from "./layout-client";
-import { Suspense } from "react";
+import StyledJsxRegistry from "./registry";
+import { UiProvider } from "../git-submodules/components/my-ui/lib/ui-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,11 +34,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Suspense>
-          <LayoutClient dict={dict}>
+        <StyledJsxRegistry>
+          <UiProvider>
             {children}
-          </LayoutClient>
-        </Suspense>
+          </UiProvider>
+        </StyledJsxRegistry>
       </body>
     </html>
   );

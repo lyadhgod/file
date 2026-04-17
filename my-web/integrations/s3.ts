@@ -8,13 +8,13 @@ import {
 } from "@aws-sdk/client-s3";
 
 const client = new S3Client({
-    region: process.env.FILE_MYWEB_S3_REGION,
-    credentials: {
-        accessKeyId: process.env.FILE_MYWEB_S3_ACCESS_KEY,
-        secretAccessKey: process.env.FILE_MYWEB_S3_SECRET_KEY,
-    },
-    endpoint: process.env.FILE_MYWEB_S3_URL,
-});
+        region: process.env.FILE_MYWEB_S3_REGION,
+        credentials: {
+            accessKeyId: process.env.FILE_MYWEB_S3_ACCESS_KEY,
+            secretAccessKey: process.env.FILE_MYWEB_S3_SECRET_KEY,
+        },
+        endpoint: process.env.FILE_MYWEB_S3_URL,
+    });
 
 async function createBucketIfDev() {
     if (process.env.NODE_ENV !== 'development') return;
