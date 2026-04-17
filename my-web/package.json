@@ -7,7 +7,10 @@
     "build": "next build",
     "build:preview": "next build",
     "start": "next start -p 3005",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "setup": "npm run setup:submodules && npm install && npm run setup:prisma",
+    "setup:submodules": "sh ./install.sh",
+    "setup:prisma": "npx -y prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1030.0",
